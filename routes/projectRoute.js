@@ -1,32 +1,31 @@
 const express = require("express");
 const {
   postProject,
-  getALLPRoject,
+  getAllProjects,
   getSingleProject,
   deleteProject,
   updateProject,
 } = require("../controllers/projectController");
-
 const requireAuth = require("../middlewares/requireAuth");
 
-//router
+// router
 const router = express.Router();
 
 router.use(requireAuth);
 
-//routes
-router.get("/", getALLPRoject);
+// GET all projects
+router.get("/", getAllProjects);
 
-//GET a single project
+// GET a single project
 router.get("/:id", getSingleProject);
 
-//post
+// POST a new project
 router.post("/", postProject);
 
-//delete
+// DELETE a project
 router.delete("/:id", deleteProject);
-//update
 
+// UPDATE a project
 router.patch("/:id", updateProject);
 
 module.exports = router;

@@ -1,23 +1,21 @@
-const mongoose = require("mongoose"); //is id valid check
-const Project = require("../models/projectModels");
+const mongoose = require("mongoose");
+const Project = require("../models/projectModel");
 
-//get all projects
-
-const getALLPRoject = async (req, res) => {
+// get all projects
+const getAllProjects = async (req, res) => {
   const user_id = req.user._id;
 
-  const projects = await Project.find({ user_id }).sort({ createdAt: -1 }); //descending, newly added project on top
+  const projects = await Project.find({ user_id }).sort({ createdAt: -1 }); // descending, newly added project on top
+
   res.status(200).json(projects);
 };
 
-//get a single project
-
+// get a single project
 const getSingleProject = async (req, res) => {
   const { id } = req.params;
 
-  //is id valid check
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "Invalide id" });
+    return res.status(404).json({ error: "Invalid id" });
   }
 
   const project = await Project.findById(id);
@@ -29,7 +27,7 @@ const getSingleProject = async (req, res) => {
   res.status(200).json(project);
 };
 
-//post a new project
+// post a new project
 const postProject = async (req, res) => {
   const { title, tech, budget, duration, manager, dev } = req.body;
 
@@ -38,18 +36,23 @@ const postProject = async (req, res) => {
   if (!title) {
     emptyFields.push("title");
   }
+
   if (!tech) {
     emptyFields.push("tech");
   }
+
   if (!budget) {
     emptyFields.push("budget");
   }
+
   if (!duration) {
     emptyFields.push("duration");
   }
+
   if (!manager) {
     emptyFields.push("manager");
   }
+
   if (!dev) {
     emptyFields.push("dev");
   }
@@ -57,7 +60,7 @@ const postProject = async (req, res) => {
   if (emptyFields.length > 0) {
     return res
       .status(400)
-      .json({ error: "please fill in all fields", emptyFields });
+      .json({ error: "Please fill in all fields", emptyFields });
   }
 
   try {
@@ -66,14 +69,14 @@ const postProject = async (req, res) => {
       ...req.body,
       user_id,
     });
+
     res.status(200).json(project);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-//delete a project
-
+// delete a project
 const deleteProject = async (req, res) => {
   const { id } = req.params;
 
@@ -81,7 +84,8 @@ const deleteProject = async (req, res) => {
     return res.status(404).json({ error: "Invalid id" });
   }
 
-  const project = await Project.findByIdAndDelete({ _id: id });
+  const project = await Project.findOneAndDelete({ _id: id });
+
   if (!project) {
     return res.status(400).json({ error: "No project found" });
   }
@@ -89,8 +93,7 @@ const deleteProject = async (req, res) => {
   res.status(200).json(project);
 };
 
-//update a project
-
+// update a project
 const updateProject = async (req, res) => {
   const { id } = req.params;
 
@@ -101,18 +104,23 @@ const updateProject = async (req, res) => {
   if (!title) {
     emptyFields.push("title");
   }
+
   if (!tech) {
     emptyFields.push("tech");
   }
+
   if (!budget) {
     emptyFields.push("budget");
   }
+
   if (!duration) {
     emptyFields.push("duration");
   }
+
   if (!manager) {
     emptyFields.push("manager");
   }
+
   if (!dev) {
     emptyFields.push("dev");
   }
@@ -120,7 +128,7 @@ const updateProject = async (req, res) => {
   if (emptyFields.length > 0) {
     return res
       .status(400)
-      .json({ error: "please fill in all fields", emptyFields });
+      .json({ error: "Please fill in all fields", emptyFields });
   }
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -132,6 +140,7 @@ const updateProject = async (req, res) => {
     { ...req.body },
     { new: true }
   );
+
   if (!project) {
     return res.status(400).json({ error: "No project found" });
   }
@@ -141,7 +150,7 @@ const updateProject = async (req, res) => {
 
 module.exports = {
   postProject,
-  getALLPRoject,
+  getAllProjects,
   getSingleProject,
   deleteProject,
   updateProject,
